@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unifi Protect logg nedlaster</title>
+</head>
+<body>
+  <h1>Unifi Protect logg nedlaster</h1>
+  <form action="index.php" method="post">
+    <input type="submit" name="start_download" value="Start Download">
+  </form>
+
+  <?php
+    if (isset($_POST['start_download'])) {
+      $output = shell_exec('bash get_logs.sh');
+      $zipFile = trim($output);
+      if (file_exists($zipFile)) {
+        echo "<p>Download complete! <a href=\"$zipFile\">Click here to download the logs</a></p>";
+      } else {
+        echo "<p>Error downloading logs.</p>";
+      }
+    }
+
+    $downloadsDir = 'downloads';
+    if (is_dir($downloadsDir)) {
+      $files = scandir($downloadsDir);
+      echo "<h2>Previous Downloads:</h2>";
+      echo "<ul>";
+      foreach ($files as $file) {
+        if ($file !== '.' && $file !== '..') {
+          echo "<li><a href=\"${downloadsDir}/${file}\">${file}</a></li>";
+        }
+      }
+      echo "</ul>";
+    }
+  ?>
+</body>
+</html>
